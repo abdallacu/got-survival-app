@@ -18,18 +18,35 @@ scaler = joblib.load("scaler.pkl")
 
 st.title("Game of Thrones Character Survival Predictor")
 
-st.write("Input the character's features:")
+st.write("Enter the character features below:")
 
-# Replace these with your actual features and ranges
-gender = st.selectbox("Gender (0 = Female, 1 = Male)", [0, 1])
-book_count = st.slider("Books Appeared In", 0, 5, 1)
-house = st.number_input("House (Encoded)", min_value=0, max_value=50, step=1)
-nobility = st.selectbox("Nobility (0 = No, 1 = Yes)", [0, 1])
+# Input fields
+pred = st.selectbox("Prediction Source (0 = unknown, 1 = known)", [0, 1])
+alive = st.selectbox("Alive at some point (0 = No, 1 = Yes)", [0, 1])
+plod = st.selectbox("Plod (0 = No, 1 = Yes)", [0, 1])
+male = st.selectbox("Gender (0 = Female, 1 = Male)", [0, 1])
+house = st.number_input("House (encoded)", min_value=0, max_value=100, step=1)
+book1 = st.selectbox("Appears in Book 1", [0, 1])
+book2 = st.selectbox("Appears in Book 2", [0, 1])
+book3 = st.selectbox("Appears in Book 3", [0, 1])
+book4 = st.selectbox("Appears in Book 4", [0, 1])
+book5 = st.selectbox("Appears in Book 5", [0, 1])
+isMarried = st.selectbox("Is Married (0 = No, 1 = Yes)", [0, 1])
+isNoble = st.selectbox("Is Noble (0 = No, 1 = Yes)", [0, 1])
+numDeadRelations = st.number_input("Number of Dead Relations", min_value=0, max_value=100, step=1)
+boolDeadRelations = st.selectbox("Has Dead Relations (0 = No, 1 = Yes)", [0, 1])
+isPopular = st.selectbox("Is Popular (0 = No, 1 = Yes)", [0, 1])
 popularity = st.slider("Popularity Score", 0.0, 1.0, 0.5)
 
-features = np.array([[gender, book_count, house, nobility, popularity]])
+# Arrange features in the correct order
+features = np.array([[pred, alive, plod, male, house, book1, book2, book3,
+                      book4, book5, isMarried, isNoble, numDeadRelations,
+                      boolDeadRelations, isPopular, popularity]])
+
+# Scale input
 features_scaled = scaler.transform(features)
 
+# Predict
 if st.button("Predict"):
     prediction = model.predict(features_scaled)[0]
-    st.success("Prediction: **Alive**" if prediction == 1 else "Prediction: **Dead**")
+    st.success(f"Prediction: {'Alive' if prediction == 1 else 'Dead'}")
